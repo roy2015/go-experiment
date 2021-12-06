@@ -1,0 +1,9 @@
+server:
+  port: 4080
+  servlet:
+    context-path: /v1/
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
