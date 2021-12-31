@@ -7,6 +7,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	. "html/template"
 	"os"
 	"strings"
@@ -213,7 +214,7 @@ func (c *testCase) mustExecute(t *Template, val interface{}, want string) {
 	if err != nil {
 		c.t.Fatalf("execute: %v", err)
 	}
-	//fmt.Println("output", buf.String())
+	fmt.Println("output", buf.String())
 	if buf.String() != want {
 		c.t.Fatalf("template output:\n%s\nwant:\n%s", buf.String(), want)
 	}
@@ -226,7 +227,7 @@ type myObj struct {
 func Test1(t *testing.T) {
 	c := newTestCase(t)
 	var obj = myObj{}
-	obj.Names = []string{"1", "2", "3"}
+	obj.Names = []string{"      11", "2", "3"}
 	content, error := os.ReadFile("test-template.html")
 	if error != nil {
 		panic("文件读取发生错误")
