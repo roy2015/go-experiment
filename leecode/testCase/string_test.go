@@ -5,7 +5,6 @@
 package main
 
 import (
-	"runtime"
 	. "strconv"
 	"strings"
 	"testing"
@@ -50,9 +49,9 @@ func TestCountMallocs(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping malloc count in short mode")
 	}
-	if runtime.GOMAXPROCS(0) > 1 {
-		t.Skip("skipping; GOMAXPROCS>1")
-	}
+	//if runtime.GOMAXPROCS(0) > 1 {
+	//	t.Skip("skipping; GOMAXPROCS>1")
+	//}
 	// Allocate a big messy buffer for AppendQuoteToASCII's test.
 	oneMB = make([]byte, 1e6)
 	for i := range oneMB {
