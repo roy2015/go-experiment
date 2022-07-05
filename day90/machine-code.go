@@ -5,9 +5,11 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"flag"
 	"fmt"
 	"os/exec"
 	"regexp"
+	"strings"
 )
 
 //已对齐，填充一个长度为blockSize且每个字节均为blockSize的数据。
@@ -65,11 +67,9 @@ func getMachineCode() string {
 	return content
 }
 
-func main3() {
+func encode(key []byte, iv []byte) {
 	plaintext := []byte(getMachineCode())
-
-	key := []byte("sN1DEJAVZNf3OdM3")
-	iv := []byte("GDHgt7hbKpsIR4b4")
+	plaintext = []byte(strings.Join([]string{"video-media-platform", string(plaintext), "20270101"}, "/"))
 
 	//plaintext := []byte("video-media-platform/00000000-0000-0000-0000-AC1F6B947B76/2022-06-29 14:43:19")
 	//加密
@@ -82,7 +82,7 @@ func main3() {
 	base64Ciphertext := base64.StdEncoding.EncodeToString(ciphertext)
 	//fmt.Println(base64Ciphertext)
 	fmt.Println("密文：", base64.StdEncoding.EncodeToString([]byte(base64Ciphertext)))
-	fmt.Println("ajlKWkNnc05zZXIwbTljdnBuNnVEZVlGd3VvNUY1alJsYitrVytheU9hNVJPLzIyenV1ZWRHU1lTLzhYckR4cXI2T21SVVdXTTZ6L3V5blI5dEtsbUhjczIwenFZdXhlMjdZcHVKaWNucm89")
+	//fmt.Println("ajlKWkNnc05zZXIwbTljdnBuNnVEZVlGd3VvNUY1alJsYitrVytheU9hNVJPLzIyenV1ZWRHU1lTLzhYckR4cXI2T21SVVdXTTZ6L3V5blI5dEtsbUhjczIwenFZdXhlMjdZcHVKaWNucm89")
 
 	//解密
 	plaintext, err = AesDecrypt(ciphertext, key, iv)
@@ -91,6 +91,45 @@ func main3() {
 	}
 
 	//打印解密明文
-	//fmt.Println(string(plaintext))
+	fmt.Println(string(plaintext))
+}
+
+//解密密文
+func decode(ciphertext string, key []byte, iv []byte) string {
+	//两次base64
+	oneTimeDecode, error := base64.StdEncoding.DecodeString(ciphertext)
+	if error != nil {
+		panic(error)
+	}
+	towTimeDecode, error := base64.StdEncoding.DecodeString(string(oneTimeDecode))
+	if error != nil {
+		panic(error)
+	}
+
+	plaintext, _ := AesDecrypt([]byte(towTimeDecode), key, iv)
+
+	return string(plaintext)
+
+}
+
+func main3() {
+	key := []byte("sN1DEJAVZNf3OdM3")
+	iv := []byte("GDHgt7hbKpsIR4b4")
+
+	wordPtr := flag.String("opts", "encode", "请输入操作 encode, decode")
+	flag.Parse()
+	opts := *wordPtr
+	switch opts {
+	case "encode":
+		encode(key, iv)
+	case "decode":
+		arg := flag.Args()
+		if len(arg) < 1 {
+			panic("请输入要解密的密文")
+		}
+		fmt.Println(decode(arg[0], key, iv))
+	default:
+		panic("无效参数")
+	}
 
 }
