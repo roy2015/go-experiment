@@ -1,0 +1,14 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	"testing"
+)
+
+func TestBinary(t *testing.T) {
+	fmt.Println("整型转成2进制", strconv.FormatInt(100, 2))
+	i, _ := strconv.ParseInt("100", 2, 0)
+	fmt.Println("字符串转数字", i)
+	fmt.Println("或运算", 1|2)
+}
